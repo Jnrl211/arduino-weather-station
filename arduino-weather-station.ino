@@ -7,9 +7,9 @@
  *
  */
 
-// include libraries
+// include libraries (angle brackets syntax)
 #include <LiquidCrystal.h>
-#include "DHT.h"
+#include <DHT.h>
 
 // digital pin connected to the DHT sensor
 // (note for "Feather HUZZAH ESP8266" board: use pins 3, 4, 5, 12, 13 or 14; pin 15 can work but DHT must be disconnected during program upload): 
@@ -28,7 +28,7 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 // (this parameter is no longer needed as the current DHT reading algorithm adjusts itself to work on faster processors)
 DHT dht(DHTPIN, DHTTYPE);
 
-// sketch members
+// sketch constants & variables
 int dhtMs = 0;   // Delta in miliseconds since last DHT run
 const int DHTDELAY = 3000;   // DHT sensor (simulated) delay
 String degC = "__";   // Temperature in Celsius degrees, as String
@@ -40,9 +40,9 @@ void setup() {
 
   // print a placeholder message to the LCD, while the sensor obtains the first reading
   lcd.print("Loading...");
-	
-	// DHT sensor setup code
-	Serial.begin(9600);   // Set BPS rate for serial communication (for Serial Monitor only, at the moment)
+
+  // DHT sensor setup code
+  Serial.begin(9600);   // Set BPS rate for serial communication (for Serial Monitor only, at the moment)
   Serial.println(F("DHT11 test!"));
   dht.begin();
 }
@@ -53,34 +53,34 @@ void loop() {
   // DHT code: runs once approximately every DHTDELAY miliseconds because: 
   // - reading temperature or humidity takes about 250 milliseconds
   // - DHT11 sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-	if (int(millis() - dhtMs) >= DHTDELAY) {		
-		float h = dht.readHumidity();
-		float t = dht.readTemperature();
-		float f = dht.readTemperature(true);
-		
-		dhtMs = millis(); // this is placed here so "return" doesn't leave the loop before resetting this variable
+  if (int(millis() - dhtMs) >= DHTDELAY) {		
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    float f = dht.readTemperature(true);
 
-		if (isnan(h) || isnan(t) || isnan(f)) {
-	    Serial.println(F("Failed to read from DHT sensor!"));
-  	  return;
-	  }
+    dhtMs = millis(); // this is placed here so "return" doesn't leave the loop before resetting this variable
+
+    if (isnan(h) || isnan(t) || isnan(f)) {
+      Serial.println(F("Failed to read from DHT sensor!"));
+      return;
+    }
 
     degC = String(t); // once validated, the new value can be stored to the display variable
-		
-		float hif = dht.computeHeatIndex(f, h);
-		float hic = dht.computeHeatIndex(t, h, false);
-		
-		Serial.print(F("Humidity: "));
-	  Serial.print(h);
-	  Serial.print(F("%  Temperature: "));
-	  Serial.print(t);
-	  Serial.print(F("°C "));
-	  Serial.print(f);
-	  Serial.print(F("°F  Heat index: "));
-	  Serial.print(hic);
-	  Serial.print(F("°C "));
-	  Serial.print(hif);
-	  Serial.println(F("°F"));
+
+    float hif = dht.computeHeatIndex(f, h);
+    float hic = dht.computeHeatIndex(t, h, false);
+
+    Serial.print(F("Humidity: "));
+    Serial.print(h);
+    Serial.print(F("%  Temperature: "));
+    Serial.print(t);
+    Serial.print(F("°C "));
+    Serial.print(f);
+    Serial.print(F("°F  Heat index: "));
+    Serial.print(hic);
+    Serial.print(F("°C "));
+    Serial.print(hif);
+    Serial.println(F("°F"));
 
     // overwrites the previous "standing" text, and allows the blinking cursor to show up
     lcd.noBlink();
@@ -89,5 +89,5 @@ void loop() {
     lcd.setCursor(0, 1);   // set cursor at first column (0) of second line (1)
     // (note that this LCD driver uses a custom charset, different than ASCII; the character code to get the degrees symbol "char(223)" was obtained from the datasheet of 1602A LCD display)
     lcd.print("T=" + degC + char(223) + 'C');
-	}
+  }
 }
